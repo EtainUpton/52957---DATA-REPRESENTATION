@@ -11,6 +11,6 @@ Quick assignments (30%)
 ### Big Project
 There is flexibility in what you do for this project, but, as a minimum, your project should have code that demonstrates:
 
-    * Consuming a RESTful API, either in Python (your server) or  javascript (web page) 
-    * Running a Server.
-    * Web frontend to display data and interact with server
+* Consuming a RESTful API, either in Python (your server) or  javascript (web page) 
+* Running a Server.
+* Web frontend to display data and interact with server
