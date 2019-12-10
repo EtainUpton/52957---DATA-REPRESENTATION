@@ -1,0 +1,129 @@
+Lab 09.01 Databases
+
+Before the labInstall a mysql database on your machine,if you do not alreadyhave one. 
+WindowsI recommendinstallingWAMP,go tohttp://www.wampserver.com/en/download-wampserver-64bits/You may need to install the MicrosoftC++ dll to get it to work, 
+link is on thedownloadpage. 
+Make sure that you get the same version (32bit or 64 bit) as your wampserver.
+
+DONE.
+
+Note to Andrew Beatty and examiners:
+I had initially completed the work and created a table called Student and Book, then I accidentally closed the SQL prior to copying the text, hence the names below are 
+Student2 and Book2.
+
+1.
+
+Enter password:
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 10
+Server version: 8.0.18 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2019, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| datarep            |
+| information_schema |
+| mysql              |
+| performance_schema |
+| sys                |
++--------------------+
+5 rows in set (0.00 sec)
+
+mysql> show tables;
+ERROR 1046 (3D000): No database selected
+mysql> use datarep
+Database changed
+mysql> show tables;
++-------------------+
+| Tables_in_datarep |
++-------------------+
+| book              |
+| student           |
+| test              |
++-------------------+
+3 rows in set (0.01 sec)
+
+mysql> create table Student (
+    -> id int NOT NULL auto_increment,
+    -> firstname varchar(100),
+    -> age int(3)
+    -> PRIMARY KEY(id)
+    -> );
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '(id)
+)' at line 5
+mysql> create table Student (
+    -> id int NOT NULL auto_increment,
+    -> firstname varchar(100),
+    -> age int(3),
+    -> PRIMARY KEY(id)
+    -> );
+ERROR 1050 (42S01): Table 'student' already exists
+mysql> create table Student2 (
+    -> id int NOT NULL auto_increment,
+    -> firstname varchar(100),
+    -> age int(3),
+    -> PRIMARY KEY(id)
+    -> );
+Query OK, 0 rows affected, 1 warning (0.03 sec)
+
+mysql> insert into student2 (firstname, age) values ('joe',56);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select * from student2;
++----+-----------+------+
+| id | firstname | age  |
++----+-----------+------+
+|  1 | joe       |   56 |
++----+-----------+------+
+1 row in set (0.00 sec)
+
+mysql> Delete from student where id = 1;
+Query OK, 0 rows affected (0.00 sec)
+
+2.
+
+mysql> create table book2 (
+    -> id int NOT NULL auto_increment,
+    -> title varchar(250),
+    -> author varchar(250),
+    -> price int(6)
+    -> price int(6),
+    -> PRIMARY KEY(id)
+    -> );
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'price int(6),
+PRIMARY KEY(id)
+)' at line 6
+mysql> create table book2 (
+    -> id int NOT NULL auto_increment,
+    -> title varchar(250),
+    -> author varchar(250),
+    -> price int(6),
+    -> PRIMARY KEY(id)
+    -> );
+Query OK, 0 rows affected, 1 warning (0.03 sec)
+
+mysql> insert into book2 (title, author, price) values (journey, 'Amanda Bynes', 10);
+ERROR 1054 (42S22): Unknown column 'journey' in 'field list'
+mysql> insert into book2 (title, author, price) values ('journey', 'Amanda Bynes', 10);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select * from book2;
++----+---------+--------------+-------+
+| id | title   | author       | price |
++----+---------+--------------+-------+
+|  1 | journey | Amanda Bynes |    10 |
++----+---------+--------------+-------+
+1 row in set (0.00 sec)
+
+mysql>
+
+3. 
