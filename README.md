@@ -4,11 +4,15 @@ This repository includes my final project and labwork/quick assignments for this
 
 ### Information on this module:
 
-Module Name: 52957---DATA-REPRESENTATION
+Module Name: 52957---DATA-REPRESENTATION as part of the Higher Diploma in Data Analytics.
 
 5 Credit Module. 
 
 Lecturer: Andrew Beatty. 
+
+Student: Etain Upton G00318876
+
+Deadline: 20th December 2019
 
 I will be graded for module based on the following;
 
