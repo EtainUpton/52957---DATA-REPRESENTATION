@@ -12,7 +12,7 @@ Lecturer: Andrew Beatty.
 
 Student: Etain Upton G00318876
 
-Deadline: 20th December 2019
+Deadline: 20th December 2019 (As agreed with Andrew Beatty - via email exchange).
 
 I will be graded for module based on the following;
 
