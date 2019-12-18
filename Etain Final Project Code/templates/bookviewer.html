@@ -1,0 +1,242 @@
+<html>
+    <head>
+        <Name> View Dogs</Name>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+       
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    </head>
+    <body>
+        <h1>Dogs</h1>
+        <div> <button id="showCreateButton" onclick="showCreate()">Create</button></div>
+        <div>
+            <table class="table" id="DogTable">
+                <tr>
+                        <th>id</th>
+                        <th>Name</th>
+                        <th>
+                            Owner
+                        </th>
+                        <th>Value</th>
+                        <th>Update</th>
+                        <th>Delete</th>
+                </tr>
+                
+            </table>
+        </div>
+        <div id='createUpdateForm' style="display: none">
+                <h2><span id="createLabel">Create a</span> <span id="updateLabel">update</span> Dog</h2>
+                <input type="hidden" name="id"/>
+                Name <input type="text" name="Name" /><br/>
+                Owner <input type="text" name="Owner"/> <br/>
+                Value <input type="number" name="Value"/> <br/>
+                <span><button id="doCreateButton" onclick="doCreate()">Create</button></span>
+                <span><button id="doUpdateButton" onclick="doUpdate()">Update</button></span>
+        </div>
+    </body>
+    <script>
+    function showCreate(){
+        document.getElementById('showCreateButton').style.display="none"
+        document.getElementById('DogTable').style.display="none"
+        document.getElementById('createUpdateForm').style.display="block"
+
+        document.getElementById('createLabel').style.display="inline"
+        document.getElementById('updateLabel').style.display="none"
+
+        document.getElementById('doCreateButton').style.display="block"
+        document.getElementById('doUpdateButton').style.display="none"
+
+    }
+    function showViewAll(){
+        document.getElementById('showCreateButton').style.display="block"
+        document.getElementById('DogTable').style.display="block"
+        document.getElementById('createUpdateForm').style.display="none"
+    }
+    function showUpdate(buttonElement){
+        document.getElementById('showCreateButton').style.display="none"
+        document.getElementById('DogTable').style.display="none"
+        document.getElementById('createUpdateForm').style.display="block"
+
+        document.getElementById('createLabel').style.display="none"
+        document.getElementById('updateLabel').style.display="inline"
+
+        document.getElementById('doCreateButton').style.display="none"
+        document.getElementById('doUpdateButton').style.display="block"
+
+
+        var rowElement = buttonElement.parentNode.parentNode
+        // these is a way of finding the closest <tr> which would safer, closest()
+        
+        var Dog = getDogFromRow(rowElement)
+        populateFormWithDog(Dog)
+    }
+    function doCreate(){
+        var form = document.getElementById('createUpdateForm')
+
+        var Dog = {}
+       
+        Dog.Name = form.querySelector('input[name="Name"]').value
+        Dog.Owner = form.querySelector('input[name="Owner"]').value
+        Dog.Value = form.querySelector('input[name="Value"]').value
+        console.log(JSON.stringify(Dog))
+        createDogAjax(Dog)
+        
+        
+    }
+    function doUpdate(){
+        var Dog = getDogFromForm();
+        var rowElement = document.getElementById(Dog.id);
+        updateDogAjax(Dog);
+        setDogInRow(rowElement,Dog);
+       
+        clearForm();
+        showViewAll();
+    }
+    function doDelete(r){
+        var tableElement = document.getElementById('DogTable');
+        var rowElement = r.parentNode.parentNode;
+        var index = rowElement.rowIndex;
+        deleteDogAjax(rowElement.getAttribute("id"));
+        tableElement.deleteRow(index);
+    }
+    function addDogToTable(Dog){
+        var tableElement = document.getElementById('DogTable')
+        var rowElement = tableElement.insertRow(-1)
+        rowElement.setAttribute('id',Dog.id)
+        var cell1 = rowElement.insertCell(0);
+        cell1.innerHTML = Dog.id
+        var cell2 = rowElement.insertCell(1);
+        cell2.innerHTML = Dog.Name
+        var cell3 = rowElement.insertCell(2);
+        cell3.innerHTML = Dog.Owner
+        var cell4 = rowElement.insertCell(3);
+        cell4.innerHTML = Dog.Value
+        var cell5 = rowElement.insertCell(4);
+        cell5.innerHTML = '<button onclick="showUpdate(this)">Update</button>'
+        var cell6 = rowElement.insertCell(5);
+        cell6.innerHTML = '<button onclick=doDelete(this)>delete</button>'
+
+    }
+
+    function clearForm(){
+        var form = document.getElementById('createUpdateForm')
+
+        form.querySelector('input[name="Name"]').value=''
+        form.querySelector('input[name="Owner"]').value=''
+        form.querySelector('input[name="Value"]').value=''
+    }
+    function getDogFromRow(rowElement){
+        var car ={}
+        Dog.id  = rowElement.getAttribute('id')
+        Dog.Name = rowElement.cells[1].firstChild.textContent
+        Dog.Owner = rowElement.cells[2].firstChild.textContent
+        Dog.Value = parseInt(rowElement.cells[3].firstChild.textContent,10)
+        return Dog
+    }
+    function setDogInRow(rowElement, Dog){
+        rowElement.cells[0].firstChild.textContent= Dog.id  
+        rowElement.cells[1].firstChild.textContent= Dog.Name 
+        rowElement.cells[2].firstChild.textContent= Dog.Owner
+        rowElement.cells[3].firstChild.textContent= Dog.Value
+    }
+    function populateFormWithDog(Dog){
+        var form = document.getElementById('createUpdateForm')
+        form.querySelector('input[name="id"]').disabled = true
+
+        form.querySelector('input[name="id"]').value  = Dog.id
+        form.querySelector('input[name="Name"]').value= Dog.Name
+        form.querySelector('input[name="Owner"]').value= Dog.Owner
+        form.querySelector('input[name="Value"]').value= Dog.Value
+        return Dog
+    }
+    function getDogFromForm(){
+        var form = document.getElementById('createUpdateForm')
+        var Dog = {}
+        Dog.id = form.querySelector('input[name="id"]').value
+        Dog.Name = form.querySelector('input[name="Name"]').value
+        Dog.Owner = form.querySelector('input[name="Owner"]').value
+        Dog.Value = parseInt(form.querySelector('input[name="Value"]').value,10)
+        console.log(JSON.stringify(Dog))
+        return Dog
+    }
+    function getAllAjax(){
+        $.ajax({
+            "url": "http://127.0.0.1:5000/dogs",
+            "method":"GET",
+            "data":"",
+            "dataType": "JSON",
+            "success":function(result){
+                //console.log(result);
+                for (Dog of result){
+                    addDogToTable(Dog);
+                }
+                
+            },
+            "error":function(xhr,status,error){
+                console.log("error: "+status+" msg:"+error);
+            }
+        });
+
+    }
+    function createDogAjax(Dog){
+        //var car = {"reg":"12 D 1234","make":"Fiat","model":"Punto","Value":3000}
+        console.log(JSON.stringify(Dog));
+        $.ajax({
+            "url": "http://127.0.0.1:5000/dogs",
+            "method":"POST",
+            "data":JSON.stringify(Dog),
+            "dataType": "JSON",
+            contentType: "application/json; charset=utf-8",
+            "success":function(result){
+                //console.log(result);
+                Dog.id = result.id
+                addDogToTable(Dog)
+                clearForm()
+                showViewAll()
+            },
+            "error":function(xhr,status,error){
+                console.log("error: "+status+" msg:"+error);
+            }
+        });
+    }
+    function updateDogAjax(Dog){
+        //var car = {"reg":"12 D 1234","Value":8000}
+        console.log(JSON.stringify(Dog));
+        $.ajax({
+            "url": "http://127.0.0.1:5000/dogs/"+encodeURI(Dog.id),
+            "method":"PUT",
+            "data":JSON.stringify(Dog),
+            "dataType": "JSON",
+            contentType: "application/json; charset=utf-8",
+            "success":function(result){
+               // console.log(result);
+                  
+            },
+            "error":function(xhr,status,error){
+                console.log("error: "+status+" msg:"+error);
+            }
+        });
+    }
+    function deleteDogAjax(id){
+        
+        //console.log(JSON.stringify('deleting '+id));
+        $.ajax({
+            "url": "http://127.0.0.1:5000/dogs/"+encodeURI(id),
+            "method":"DELETE",
+            "data":"",
+            "dataType": "JSON",
+            contentType: "application/json; charset=utf-8",
+            "success":function(result){
+                //console.log(result);
+                  
+            },
+            "error":function(xhr,status,error){
+                console.log("error: "+status+" msg:"+error);
+            }
+        });
+    }
+    getAllAjax();
+  
+
+    
+    </script>
+</html>
