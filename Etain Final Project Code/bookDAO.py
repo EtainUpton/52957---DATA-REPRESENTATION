@@ -1,20 +1,17 @@
 import mysql.connector
-class BookDAO:
+class DogDAO:
     db=""
     def __init__(self): 
         self.db = mysql.connector.connect(
         host="localhost",
         user="root",
         password="",
-        #user="datarep",  # this is the user name on my mac
-        #passwd="password" # for my mac
         database="datarepresentation"
         )
-    
-            
+      
     def create(self, values):
         cursor = self.db.cursor()
-        sql="insert into book (title,author, price) values (%s,%s,%s)"
+        sql="insert into dog (name,owner,value) values (%s,%s,%s)"
         cursor.execute(sql, values)
 
         self.db.commit()
@@ -22,7 +19,7 @@ class BookDAO:
 
     def getAll(self):
         cursor = self.db.cursor()
-        sql="select * from book"
+        sql="select * from dog"
         cursor.execute(sql)
         results = cursor.fetchall()
         returnArray = []
@@ -35,7 +32,7 @@ class BookDAO:
 
     def findByID(self, id):
         cursor = self.db.cursor()
-        sql="select * from book where id = %s"
+        sql="select * from dog where id = %s"
         values = (id,)
 
         cursor.execute(sql, values)
@@ -44,12 +41,12 @@ class BookDAO:
 
     def update(self, values):
         cursor = self.db.cursor()
-        sql="update book set title= %s,author=%s, price=%s  where id = %s"
+        sql="update dog set name= %s,owner=%s, value=%s  where id = %s"
         cursor.execute(sql, values)
         self.db.commit()
     def delete(self, id):
         cursor = self.db.cursor()
-        sql="delete from book where id = %s"
+        sql="delete from dog where id = %s"
         values = (id,)
 
         cursor.execute(sql, values)
@@ -58,7 +55,7 @@ class BookDAO:
         print("delete done")
 
     def convertToDictionary(self, result):
-        colnames=['id','Title','Author', "Price"]
+        colnames=['id','Name','Owner', "Value"]
         item = {}
         
         if result:
@@ -68,4 +65,4 @@ class BookDAO:
         
         return item
         
-bookDAO = BookDAO()
+dogDAO = DogDAO()
