@@ -1,13 +1,8 @@
 from flask import Flask, jsonify, request, abort, render_template
+from dogDAO import dogDAO
+import mysql.connector
 
 app = Flask(__name__, static_url_path='', static_folder='.')
-
-dogs=[
-    { "id":123, "Name":"Fluffy", "Owner":"John Doe", "Value": 10000},
-    { "id":456, "Name":"Bob", "Owner":"Jane Doe", "Value": 20000},
-    { "id":789, "Name":"Rex", "Owner":"Jim Doe", "Value": 30000}
-]
-nextId=101
 
 @app.route('/')
 def index():
@@ -16,41 +11,39 @@ def index():
 #curl "http://127.0.0.1:5000/dogs"
 @app.route('/dogs')
 def getAll():
-    return jsonify(dogs)
+    results = dogDAO.getAll()
+    return jsonify(results)
 
 #curl "http://127.0.0.1:5000/dogs/2"
 @app.route('/dogs/<int:id>')
 def findById(id):
-    foundDogs = list(filter(lambda b: b['id'] == id, dogs))
-    if len(foundDogs) == 0:
-        return jsonify ({}) , 204
+    foundDog = dogDAO.findByID(id)
 
-    return jsonify(foundDogs [0])
+    return jsonify(foundDog)
 
 #curl  -i -H "Content-Type:application/json" -X POST -d "{\"Name\":\"Fluffy\",\"Owner\":\"John Doe\",\"Value\":10000}" http://127.0.0.1:5000/dogs
 @app.route('/dogs', methods=['POST'])
 def create():
-    global nextId
     if not request.json:
         abort(400)
-    #other checking
+    # other checking 
     dog = {
-        "id": nextId,
         "Name": request.json['Name'],
         "Owner": request.json['Owner'],
-        "Value": request.json['Value']
+        "Value": request.json['Value'],
     }
-    nextId += 1
-    dogs.append(dog)
-    return jsonify(dog)        
+    values =(dog['Name'],dog['Owner'],dog['Value'])
+    newId = dogDAO.create(values)
+    dog['id'] = newId
+    return jsonify(dog)     
 
 #curl  -i -H "Content-Type:application/json" -X PUT -d "{\"Name\":\"Fluffy\",\"Owner\":\"John Doe\",\"Value\":10000}" http://127.0.0.1:5000/dogs/1
 @app.route('/dogs/<int:id>', methods=['PUT'])
 def update(id):
-    foundDogs = list(filter(lambda t: t['id']== id, dogs))
-    if (len(foundDogs) == 0):
+    foundDog = dogDAO.findByID(id)
+    if not foundDog:
         abort(404)
-    foundDog = foundDogs[0]
+    
     if not request.json:
         abort(400)
     reqJson = request.json
@@ -63,17 +56,18 @@ def update(id):
         foundDog['Owner'] = reqJson['Owner']
     if 'Value' in reqJson:
         foundDog['Value'] = reqJson['Value']
-
+    values = (foundDog['Name'],foundDog['Owner'],foundDog['Value'],foundDog['id'])
+    dogDAO.update(values)
     return jsonify(foundDog)
+
 
 @app.route('/dogs/<int:id>', methods=['DELETE'])
 def delete(id):
-    foundDogs = list(filter(lambda t: t['id']== id, dogs))
-    if (len(foundDogs) == 0):
-        abort(404)
-    dogs.remove(foundDogs[0])
-    return jsonify({"done":True}) 
+    dogDAO.delete(id)
+    return jsonify({"done":True})
 
 if __name__ == '__main__' :
+    dogDAO.createTable()
+    dogDAO.populateTable()
     app.run(debug= True)
         

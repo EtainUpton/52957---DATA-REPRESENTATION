@@ -1,13 +1,31 @@
 import mysql.connector
+
 class DogDAO:
-    db=""
     def __init__(self): 
         self.db = mysql.connector.connect(
         host="localhost",
         user="root",
-        password="",
-        database="datarepresentation"
+        password="root",
+        database="dogDB"
         )
+
+    def createTable(self):
+        cursor = self.db.cursor()
+        sql="CREATE TABLE dogs (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255), owner VARCHAR(255), value INT)"
+        cursor.execute(sql)
+        self.db.commit()
+        print("Table Created")
+
+    def populateTable(self):
+        dogs=[
+            {"Name":"Fluffy", "Owner":"John Doe", "Value": 10000},
+            {"Name":"Bob", "Owner":"Jane Doe", "Value": 20000},
+            {"Name":"Rex", "Owner":"Jim Doe", "Value": 30000}
+        ]
+
+        cursor = self.db.cursor()
+        cursor.executemany("insert into dogs (name, owner, value) values (%(Name)s,%(Owner)s,%(Value)s)", dogs)
+        self.db.commit()
       
     def create(self, values):
         cursor = self.db.cursor()
